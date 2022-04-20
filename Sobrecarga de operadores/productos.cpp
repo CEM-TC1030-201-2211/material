@@ -3,18 +3,30 @@
 using namespace std;
 
 class Producto {
-private:
+protected:
     int cantidad;
     float precio;
 public:
     Producto(int cantidad, float precio): cantidad{cantidad}, precio{precio} {}
 
-    friend ostream& operator<<(ostream &os, const Producto &producto) {
-        cout << "Cantidad: " << producto.cantidad << " - Precio: $" << producto.precio;
-        return os;
+    virtual void print() const {
+        cout << "Cantidad: " << cantidad << " - Precio: $" << precio;
+    }
+
+    friend float operator+(float lhs, const Producto &rhs) {
+        return lhs + rhs.cantidad * rhs.precio;
+    }
+
+    friend void operator+=(float &lhs, const Producto &rhs) {
+        lhs = lhs + rhs;
     }
 
 };
+
+ostream& operator<<(ostream &os, const Producto &producto) {
+    producto.print();
+    return os;
+}
 
 class Libro: public Producto {
 private:
@@ -22,6 +34,10 @@ private:
 public:
     Libro(string titulo, string autor, int cantidad, float precio): 
         Producto{cantidad, precio}, titulo{titulo}, autor{autor} {}
+
+    void print() const {
+        cout << "Titulo: " << titulo << " - Autor: " << autor << " - Cantidad: " << cantidad << " - Precio: $" << precio;
+    }
 
 };
 
@@ -32,6 +48,11 @@ private:
 public:
     Pelicula(string titulo, int duracion, int cantidad, float precio):
         Producto{cantidad, precio}, titulo{titulo}, duracion{duracion} {}
+    
+    void print() const {
+        cout << "Titulo: " << titulo << " - Duracion: " << duracion << " - Cantidad: " << cantidad << " - Precio: $" << precio;
+    }
+
 };
 
 int main() {
@@ -45,8 +66,9 @@ int main() {
     float total = 0;
     for (Producto *ptr : miCarrito) {
         cout << *ptr << endl;
-        // total += *ptr;
+        // total = total + *ptr;
+        total += *ptr;
     }
-    cout << "Total a pagar: " << total << endl;
+    cout << "Total a pagar: $" << total << endl;
 
 }
